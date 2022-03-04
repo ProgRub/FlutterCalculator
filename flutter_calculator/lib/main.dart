@@ -58,22 +58,29 @@ class _CalculatorState extends State<Calculator> {
           Row(children: [
             TextButton(onPressed: () => {registerNumber(7)}, child: Text('7')),
             TextButton(onPressed: () => {registerNumber(8)}, child: Text('8')),
-            TextButton(onPressed: () => {registerNumber(9)}, child: Text('9'))
+            TextButton(onPressed: () => {registerNumber(9)}, child: Text('9')),
+            TextButton(
+                onPressed: () => {clearNumber()}, child: Text("DEL")),
+            TextButton(
+                onPressed: () => {clearNumber()}, child: Text("AC")),
           ]),
           Row(children: [
             TextButton(onPressed: () => {registerNumber(4)}, child: Text('4')),
             TextButton(onPressed: () => {registerNumber(5)}, child: Text('5')),
-            TextButton(onPressed: () => {registerNumber(6)}, child: Text('6'))
+            TextButton(onPressed: () => {registerNumber(6)}, child: Text('6')),
+            TextButton(onPressed: () => {clearNumber()}, child: Text('+')),
+            TextButton(onPressed: () => {clearNumber()}, child: Text('-'))
           ]),
           Row(children: [
             TextButton(onPressed: () => {registerNumber(1)}, child: Text('1')),
             TextButton(onPressed: () => {registerNumber(2)}, child: Text('2')),
-            TextButton(onPressed: () => {registerNumber(3)}, child: Text('3'))
+            TextButton(onPressed: () => {registerNumber(3)}, child: Text('3')),
+            TextButton(onPressed: () => {clearNumber()}, child: Text('X')),
+            TextButton(onPressed: () => {clearNumber()}, child: Text('/'))
           ]),
           Row(children: [
-            TextButton(
-                onPressed: () => {clearNumber()}, child: Text("AC")),
-            TextButton(onPressed: () => {registerNumber(0)}, child: Text('0'))
+            Padding(padding:EdgeInsets.only(left: 56.0) ,child: TextButton(onPressed: () => {registerNumber(0)}, child: Text('0'))),
+            Padding(padding:EdgeInsets.only(left: 112.0) ,child: TextButton(onPressed: () => {clearNumber()}, child: Text('=')))
           ])
         ]));
   }
