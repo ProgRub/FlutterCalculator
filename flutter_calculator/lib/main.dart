@@ -44,7 +44,7 @@ class _CalculatorState extends State<Calculator> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Flutter Calculator'),
         ),
@@ -72,15 +72,29 @@ class _CalculatorState extends State<Calculator> {
           ]),
           Row(children: [
             TextButton(
-                onPressed: () => {registerNumber(15)}, child: Text("AC")),
+                onPressed: () => {clearNumber()}, child: Text("AC")),
             TextButton(onPressed: () => {registerNumber(0)}, child: Text('0'))
           ])
         ]));
   }
 
   void registerNumber(int number) {
-    var text=displayController.text;
-    var displayNumber=int.parse(text);
-    displayController.text=(displayNumber*10+number).toString();
+    var text=displayController.text.split(" ").join("");
+    var displayNumber=int.parse(text)*10+number;
+    displayController.text=beautifyNumber(displayNumber);
+  }
+
+  void clearNumber(){
+    displayController.text="0";
+  }
+
+  String beautifyNumber(int number){
+    var numberTextCharArray=number.toString().characters.toList();
+    var index=3;
+    while (index<numberTextCharArray.length){
+      numberTextCharArray.insert(index, ' ');
+      index+=4;
+    }
+    return numberTextCharArray.join("");
   }
 }
