@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'operations.dart';
+import 'enums.dart';
 
 class Calculator extends StatefulWidget {
   @override
@@ -9,12 +9,18 @@ class Calculator extends StatefulWidget {
 class _CalculatorState extends State<Calculator> {
   late TextEditingController displayNumbersController,
       displayOperationController;
+  late DeleteMode deleteMode;
+  late String clearButtonText;
+  late int runningResult;
   @override
   void initState() {
     displayNumbersController = TextEditingController();
     displayNumbersController.text = "0";
     displayOperationController = TextEditingController();
     displayOperationController.text = "";
+    deleteMode = DeleteMode.clearNumber;
+    clearButtonText = "AC";
+    runningResult=0; //TODO: everytime an operator is clicked, update result; show intermediate result when operator is clicked
   }
 
   @override
@@ -46,9 +52,9 @@ class _CalculatorState extends State<Calculator> {
             TextButton(
                 onPressed: () => {registerNumber(9)}, child: const Text('9')),
             TextButton(
-                onPressed: () => {clearNumber()}, child: const Text("DEL")),
+                onPressed: () => {deleteDigit()}, child: const Text("DEL")),
             TextButton(
-                onPressed: () => {clearNumber()}, child: const Text("AC")),
+                onPressed: () => {clearFunction()}, child: Text(clearButtonText)),
           ]),
           Row(children: [
             TextButton(
@@ -73,7 +79,7 @@ class _CalculatorState extends State<Calculator> {
                 onPressed: () => {registerNumber(3)}, child: const Text('3')),
             TextButton(
                 onPressed: () => {addOperator(Operations.multiplication)},
-                child: const Text('X')),
+                child: const Text('x')),
             TextButton(
                 onPressed: () => {addOperator(Operations.division)},
                 child: const Text('/'))
@@ -87,19 +93,43 @@ class _CalculatorState extends State<Calculator> {
             Padding(
                 padding: const EdgeInsets.only(left: 112.0),
                 child: TextButton(
-                    onPressed: () => {clearNumber()}, child: const Text('=')))
+                    onPressed: () => {clearFunction()}, child: const Text('=')))
           ])
         ]));
+  }
+
+  void deleteDigit() {
+    var text = displayNumbersController.text.split(" ").join("");
+    var displayNumber = int.parse(text) ~/ 10;
+    displayNumbersController.text = beautifyNumber(displayNumber);
+    if (displayNumber == 0) changeDeleteMode(DeleteMode.clearOperation);
   }
 
   void registerNumber(int number) {
     var text = displayNumbersController.text.split(" ").join("");
     var displayNumber = int.parse(text) * 10 + number;
     displayNumbersController.text = beautifyNumber(displayNumber);
+    changeDeleteMode(DeleteMode.clearNumber);
   }
 
-  void clearNumber() {
+  void changeDeleteMode(DeleteMode mode) {
+    deleteMode = mode;
+    setState(() {
+      if (deleteMode == DeleteMode.clearNumber) {
+        clearButtonText = "C";
+      } else {
+        clearButtonText = "AC";
+      }
+    });
+  }
+
+  void clearFunction() {
+     if (deleteMode == DeleteMode.clearNumber) {
     displayNumbersController.text = "0";
+    changeDeleteMode(DeleteMode.clearOperation);
+      } else {
+    displayOperationController.text = "";
+      }
   }
 
   String beautifyNumber(int number) {
@@ -112,5 +142,25 @@ class _CalculatorState extends State<Calculator> {
     return numberTextCharArray.join("");
   }
 
-  void addOperator(Operations operation) {}
+  void addOperator(Operations operation) {
+    var numberText = displayNumbersController.text.split(" ").join("");
+    var numberToAdd = beautifyNumber(int.parse(numberText));
+    var operationClear = displayOperationController.text.isEmpty;
+    displayOperationController.text += numberToAdd;
+    switch (operation) {
+      case Operations.addition:
+        displayOperationController.text += " + ";
+        break;
+      case Operations.subtraction:
+        displayOperationController.text += " - ";
+        break;
+      case Operations.multiplication:
+        displayOperationController.text += " x ";
+        break;
+      case Operations.division:
+        displayOperationController.text += " / ";
+        break;
+    }
+    clearFunction();
+  }
 }
