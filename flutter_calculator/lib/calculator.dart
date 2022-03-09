@@ -13,7 +13,8 @@ class _CalculatorState extends State<Calculator> {
   late String clearButtonText;
   late int runningResult;
   late Operations previousSelectedOperation;
-  late bool showingResult,clickedEquals;
+  late bool showingResult;
+  late List<String> calculationsHistory;
   @override
   void initState() {
     displayNumbersController = TextEditingController();
@@ -24,7 +25,8 @@ class _CalculatorState extends State<Calculator> {
     clearButtonText = "AC";
     showingResult = false;
     runningResult = 0;
-    clickedEquals=false;//solve bug related with clicking equals and continuing operation
+    previousSelectedOperation = Operations.equals;
+    calculationsHistory=<String>[];
   }
 
   @override
@@ -105,6 +107,7 @@ class _CalculatorState extends State<Calculator> {
   }
 
   void deleteDigit() {
+    if(previousSelectedOperation==Operations.equals) return;
     var text = displayNumbersController.text.split(" ").join("");
     var displayNumber = int.parse(text) ~/ 10;
     displayNumbersController.text = beautifyNumber(displayNumber);
@@ -138,6 +141,7 @@ class _CalculatorState extends State<Calculator> {
       displayNumbersController.text = "0";
       changeDeleteMode(DeleteMode.clearOperation);
     } else {
+      displayNumbersController.text = "0";
       displayOperationController.text = "";
       runningResult = 0;
     }
@@ -145,10 +149,10 @@ class _CalculatorState extends State<Calculator> {
 
   String beautifyNumber(int number) {
     var numberTextCharArray = number.toString().characters.toList();
-    var index = 3;
-    while (index < numberTextCharArray.length) {
+    var index = numberTextCharArray.length-3;
+    while (index >0) {
       numberTextCharArray.insert(index, ' ');
-      index += 4;
+      index -= 3;
     }
     return numberTextCharArray.join("");
   }
@@ -157,6 +161,9 @@ class _CalculatorState extends State<Calculator> {
     var numberText = displayNumbersController.text.split(" ").join("");
     var number = int.parse(numberText);
     var numberToAdd = beautifyNumber(number);
+    if (previousSelectedOperation == Operations.equals) {
+      displayOperationController.text = "";
+    }
     var operationClear = displayOperationController.text.isEmpty;
     displayOperationController.text += numberToAdd;
     if (operationClear) {
@@ -175,8 +182,38 @@ class _CalculatorState extends State<Calculator> {
       case Operations.division:
         displayOperationController.text += " / ";
         break;
+      case Operations.equals:
+        // TODO: Handle this case.
+        break;
     }
-    try {
+    switch (previousSelectedOperation) {
+      case Operations.addition:
+        runningResult += number;
+        break;
+      case Operations.subtraction:
+        runningResult -= number;
+        break;
+      case Operations.multiplication:
+        runningResult *= number;
+        break;
+      case Operations.division:
+        runningResult ~/= number;
+        break;
+      case Operations.equals:
+        changeDeleteMode(DeleteMode.clearNumber);
+        break;
+    }
+    previousSelectedOperation = operation;
+    clearFunction();
+    showResult(false);
+  }
+
+  void showResult(bool fromEquals) {
+    showingResult = true;
+    if (fromEquals) {
+      var numberText = displayNumbersController.text.split(" ").join("");
+      var number = int.parse(numberText);
+      displayOperationController.text += beautifyNumber(number);
       switch (previousSelectedOperation) {
         case Operations.addition:
           runningResult += number;
@@ -190,35 +227,14 @@ class _CalculatorState extends State<Calculator> {
         case Operations.division:
           runningResult ~/= number;
           break;
+        case Operations.equals:
+          // TODO: Handle this case.
+          break;
       }
-    } catch (LateError) {}
-    previousSelectedOperation = operation;
-    clearFunction();
-    showResult(false);
-  }
-
-  void showResult(bool fromEquals) {
-    showingResult = true;
-    if (fromEquals) {
-      try {
-        var numberText = displayNumbersController.text.split(" ").join("");
-        var number = int.parse(numberText);
-        displayOperationController.text += beautifyNumber(number);
-        switch (previousSelectedOperation) {
-          case Operations.addition:
-            runningResult += number;
-            break;
-          case Operations.subtraction:
-            runningResult -= number;
-            break;
-          case Operations.multiplication:
-            runningResult *= number;
-            break;
-          case Operations.division:
-            runningResult ~/= number;
-            break;
-        }
-      } catch (LateError) {}
+      previousSelectedOperation = Operations.equals;
+      changeDeleteMode(DeleteMode.clearOperation);
+      calculationsHistory.add(displayOperationController.text+ " = "+beautifyNumber(runningResult));
+      print(calculationsHistory);
     }
     displayNumbersController.text = beautifyNumber(runningResult);
   }
