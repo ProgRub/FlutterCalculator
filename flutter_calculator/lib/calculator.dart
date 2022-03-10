@@ -13,8 +13,17 @@ class _CalculatorState extends State<Calculator> {
   late String clearButtonText;
   late int runningResult;
   late Operations previousSelectedOperation;
-  late bool showingResult;
+  late bool showingResult, darkModeOn;
   late List<String> calculationsHistory;
+  late ButtonStyle buttonStyle;
+  static const TextStyle textStyleButtons =
+      TextStyle(color: Colors.white, fontSize: 15.0);
+  static const TextStyle textStyleDisplays =
+      TextStyle(color: Colors.white, fontSize: 15.0);
+
+  static const InputDecoration displayStyle = InputDecoration(
+      border: InputBorder.none, filled: true, fillColor: Color.fromARGB(255, 11, 41, 97));
+
   @override
   void initState() {
     displayNumbersController = TextEditingController();
@@ -26,7 +35,16 @@ class _CalculatorState extends State<Calculator> {
     showingResult = false;
     runningResult = 0;
     previousSelectedOperation = Operations.equals;
-    calculationsHistory=<String>[];
+    calculationsHistory = <String>[];
+    buttonStyle = ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        )),
+        backgroundColor:
+            MaterialStateProperty.all(const Color.fromARGB(255, 11, 41, 97)));
+    textStyleButtons;
+    darkModeOn = true;
   }
 
   @override
@@ -35,79 +53,100 @@ class _CalculatorState extends State<Calculator> {
         appBar: AppBar(
           title: const Text('Flutter Calculator'),
         ),
-        body: Column(children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextField(
+        body: Column(children: [TextField(
                 controller: displayOperationController,
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-                readOnly: true),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextField(
+                decoration: displayStyle,
+                readOnly: true,
+                style: textStyleDisplays),TextField(
                 controller: displayNumbersController,
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-                readOnly: true),
-          ),
-          Row(children: [
+                decoration: displayStyle,
+                readOnly: true,
+                style: textStyleDisplays),
+          Row(mainAxisSize: MainAxisSize.min,children: [
             TextButton(
-                onPressed: () => {registerNumber(7)}, child: const Text('7')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(7)},
+                child: const Text('7', style: textStyleButtons)),
             TextButton(
-                onPressed: () => {registerNumber(8)}, child: const Text('8')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(8)},
+                child: const Text('8', style: textStyleButtons)),
             TextButton(
-                onPressed: () => {registerNumber(9)}, child: const Text('9')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(9)},
+                child: const Text('9', style: textStyleButtons)),
             TextButton(
-                onPressed: () => {deleteDigit()}, child: const Text("DEL")),
+                style: buttonStyle,
+                onPressed: () => {deleteDigit()},
+                child: const Text("DEL", style: textStyleButtons)),
             TextButton(
+                style: buttonStyle,
                 onPressed: () => {clearFunction()},
-                child: Text(clearButtonText)),
+                child: Text(clearButtonText, style: textStyleButtons)),
           ]),
-          Row(children: [
+          Row(mainAxisSize: MainAxisSize.min,children: [
             TextButton(
-                onPressed: () => {registerNumber(4)}, child: const Text('4')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(4)},
+                child: const Text('4', style: textStyleButtons)),
             TextButton(
-                onPressed: () => {registerNumber(5)}, child: const Text('5')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(5)},
+                child: const Text('5', style: textStyleButtons)),
             TextButton(
-                onPressed: () => {registerNumber(6)}, child: const Text('6')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(6)},
+                child: const Text('6', style: textStyleButtons)),
             TextButton(
+                style: buttonStyle,
                 onPressed: () => {addOperator(Operations.addition)},
-                child: const Text('+')),
+                child: const Text('+', style: textStyleButtons)),
             TextButton(
+                style: buttonStyle,
                 onPressed: () => {addOperator(Operations.subtraction)},
-                child: const Text('-'))
+                child: const Text('-', style: textStyleButtons))
           ]),
-          Row(children: [
+          Row(mainAxisSize: MainAxisSize.min,children: [
             TextButton(
-                onPressed: () => {registerNumber(1)}, child: const Text('1')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(1)},
+                child: const Text('1', style: textStyleButtons)),
             TextButton(
-                onPressed: () => {registerNumber(2)}, child: const Text('2')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(2)},
+                child: const Text('2', style: textStyleButtons)),
             TextButton(
-                onPressed: () => {registerNumber(3)}, child: const Text('3')),
+                style: buttonStyle,
+                onPressed: () => {registerNumber(3)},
+                child: const Text('3', style: textStyleButtons)),
             TextButton(
+                style: buttonStyle,
                 onPressed: () => {addOperator(Operations.multiplication)},
-                child: const Text('x')),
+                child: const Text('x', style: textStyleButtons)),
             TextButton(
+                style: buttonStyle,
                 onPressed: () => {addOperator(Operations.division)},
-                child: const Text('/'))
+                child: const Text('/', style: textStyleButtons))
           ]),
-          Row(children: [
-            Padding(
+          Row(mainAxisSize: MainAxisSize.min,children: [
+            Expanded(child: Padding(
                 padding: const EdgeInsets.only(left: 56.0),
                 child: TextButton(
+                    style: buttonStyle,
                     onPressed: () => {registerNumber(0)},
-                    child: const Text('0'))),
+                    child: const Text('0', style: textStyleButtons)))),
             Padding(
                 padding: const EdgeInsets.only(left: 112.0),
                 child: TextButton(
+                    style: buttonStyle,
                     onPressed: () => {showResult(true)},
-                    child: const Text('=')))
+                    child: const Text('=', style: textStyleButtons)))
           ])
         ]));
   }
 
   void deleteDigit() {
-    if(previousSelectedOperation==Operations.equals) return;
+    if (previousSelectedOperation == Operations.equals) return;
     var text = displayNumbersController.text.split(" ").join("");
     var displayNumber = int.parse(text) ~/ 10;
     displayNumbersController.text = beautifyNumber(displayNumber);
@@ -149,8 +188,8 @@ class _CalculatorState extends State<Calculator> {
 
   String beautifyNumber(int number) {
     var numberTextCharArray = number.toString().characters.toList();
-    var index = numberTextCharArray.length-3;
-    while (index >0) {
+    var index = numberTextCharArray.length - 3;
+    while (index > 0) {
       numberTextCharArray.insert(index, ' ');
       index -= 3;
     }
@@ -233,7 +272,9 @@ class _CalculatorState extends State<Calculator> {
       }
       previousSelectedOperation = Operations.equals;
       changeDeleteMode(DeleteMode.clearOperation);
-      calculationsHistory.add(displayOperationController.text+ " = "+beautifyNumber(runningResult));
+      calculationsHistory.add(displayOperationController.text +
+          " = " +
+          beautifyNumber(runningResult));
       print(calculationsHistory);
     }
     displayNumbersController.text = beautifyNumber(runningResult);
