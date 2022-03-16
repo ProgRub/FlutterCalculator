@@ -26,6 +26,7 @@ class _CalculatorState extends State<Calculator> {
   static const Color blueAccent = Color.fromARGB(255, 0, 84, 174);
   static const Color greenAccent = Color.fromARGB(255, 12, 131, 2);
   static const Color redAccent = Color.fromARGB(255, 131, 2, 2);
+  late bool numberIsNegative;
 
   static const InputDecoration displayStyle = InputDecoration(
       border: InputBorder.none, filled: true, fillColor: blueAccent);
@@ -57,6 +58,7 @@ class _CalculatorState extends State<Calculator> {
         backgroundColor: MaterialStateProperty.all(blueAccent));
     textStyleButtons;
     darkModeOn = true;
+    numberIsNegative = false;
   }
 
   @override
@@ -208,13 +210,21 @@ class _CalculatorState extends State<Calculator> {
                     id: 15,
                     column: 1,
                     row: 4,
-                    columnSpan: 3,
+                    columnSpan: 2,
                     child: TextButton(
                         style: buttonDigitsStyle,
                         onPressed: () => {registerNumber(0)},
                         child: const Text('0', style: textStyleButtons))),
                 SpannableGridCellData(
                     id: 16,
+                    column: 3,
+                    row: 4,
+                    child: TextButton(
+                        style: buttonDigitsStyle,
+                        onPressed: () => {makeNumberNegative()},
+                        child: const Text('(-)', style: textStyleButtons))),
+                SpannableGridCellData(
+                    id: 17,
                     column: 4,
                     row: 4,
                     columnSpan: 2,
@@ -225,86 +235,6 @@ class _CalculatorState extends State<Calculator> {
               ],
             ),
           )
-          // Row(mainAxisSize: MainAxisSize.min,children: [
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(7)},
-          //       child: const Text('7', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(8)},
-          //       child: const Text('8', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(9)},
-          //       child: const Text('9', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {deleteDigit()},
-          //       child: const Text("DEL", style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {clearFunction()},
-          //       child: Text(clearButtonText, style: textStyleButtons)),
-          // ]),
-          // Row(mainAxisSize: MainAxisSize.min,children: [
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(4)},
-          //       child: const Text('4', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(5)},
-          //       child: const Text('5', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(6)},
-          //       child: const Text('6', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {addOperator(Operations.addition)},
-          //       child: const Text('+', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {addOperator(Operations.subtraction)},
-          //       child: const Text('-', style: textStyleButtons))
-          // ]),
-          // Row(mainAxisSize: MainAxisSize.min,children: [
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(1)},
-          //       child: const Text('1', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(2)},
-          //       child: const Text('2', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {registerNumber(3)},
-          //       child: const Text('3', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {addOperator(Operations.multiplication)},
-          //       child: const Text('x', style: textStyleButtons)),
-          //   TextButton(
-          //       style: buttonStyle,
-          //       onPressed: () => {addOperator(Operations.division)},
-          //       child: const Text('/', style: textStyleButtons))
-          // ]),
-          // Row(mainAxisSize: MainAxisSize.min,children: [
-          //   Expanded(child: Padding(
-          //       padding: const EdgeInsets.only(left: 56.0),
-          //       child: TextButton(
-          //           style: buttonStyle,
-          //           onPressed: () => {registerNumber(0)},
-          //           child: const Text('0', style: textStyleButtons)))),
-          //   Padding(
-          //       padding: const EdgeInsets.only(left: 112.0),
-          //       child: TextButton(
-          //           style: buttonStyle,
-          //           onPressed: () => {showResult(true)},
-          //           child: const Text('=', style: textStyleButtons)))
-          // ])
         ]));
   }
 
@@ -325,6 +255,18 @@ class _CalculatorState extends State<Calculator> {
     var displayNumber = int.parse(text) * 10 + number;
     displayNumbersController.text = beautifyNumber(displayNumber);
     changeDeleteMode(DeleteMode.clearNumber);
+  }
+
+  void makeNumberNegative() {
+    var text = displayNumbersController.text.split(" ").join("");
+    var number = int.parse(text);
+    if (numberIsNegative) {
+      numberIsNegative = false;
+      number *= -1;
+    } else {
+      numberIsNegative = true;
+    }
+    displayNumbersController.text = beautifyNumber(number);
   }
 
   void changeDeleteMode(DeleteMode mode) {
@@ -350,11 +292,17 @@ class _CalculatorState extends State<Calculator> {
   }
 
   String beautifyNumber(int number) {
-    var numberTextCharArray = number.toString().characters.toList();
+    var absoluteNumber = number < 0 ? number * -1 : number;
+    var numberTextCharArray = absoluteNumber.toString().characters.toList();
     var index = numberTextCharArray.length - 3;
     while (index > 0) {
       numberTextCharArray.insert(index, ' ');
       index -= 3;
+    }
+    if (numberIsNegative && !numberTextCharArray.contains('-')) {
+      numberTextCharArray.insert(0, '- ');
+    } else if (numberTextCharArray.contains('-') && !numberIsNegative) {
+      numberTextCharArray.remove('- ');
     }
     return numberTextCharArray.join("");
   }
@@ -363,6 +311,9 @@ class _CalculatorState extends State<Calculator> {
     var numberText = displayNumbersController.text.split(" ").join("");
     var number = int.parse(numberText);
     var numberToAdd = beautifyNumber(number);
+    if (number < 0) {
+      numberToAdd = "(" + numberToAdd + ")";
+    }
     if (previousSelectedOperation == Operations.equals) {
       displayOperationController.text = "";
     }
@@ -408,6 +359,8 @@ class _CalculatorState extends State<Calculator> {
     previousSelectedOperation = operation;
     clearFunction();
     showResult(false);
+    print(runningResult);
+    numberIsNegative = false;
   }
 
   void showResult(bool fromEquals) {
@@ -433,6 +386,7 @@ class _CalculatorState extends State<Calculator> {
           // TODO: Handle this case.
           break;
       }
+      numberIsNegative = runningResult < 0;
       previousSelectedOperation = Operations.equals;
       changeDeleteMode(DeleteMode.clearOperation);
       calculationsHistory.add(displayOperationController.text +
@@ -441,5 +395,6 @@ class _CalculatorState extends State<Calculator> {
       print(calculationsHistory);
     }
     displayNumbersController.text = beautifyNumber(runningResult);
+    numberIsNegative = false;
   }
 }
