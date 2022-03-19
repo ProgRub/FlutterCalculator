@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calculator/history.dart';
 import 'package:spannable_grid/spannable_grid.dart';
 import 'enums.dart';
 
 class Calculator extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => new _CalculatorState();
+  State<StatefulWidget> createState() => _CalculatorState();
 }
 
 class _CalculatorState extends State<Calculator> {
@@ -68,12 +69,30 @@ class _CalculatorState extends State<Calculator> {
           title: const Text('Flutter Calculator'),
         ),
         body: Column(children: [
-          TextField(
-              textAlign: TextAlign.right,
-              controller: displayOperationController,
-              decoration: displayStyle,
-              readOnly: true,
-              style: textStyleDisplayOperations),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            CalcsHistory(calculationsHistory)),
+                  )
+                },
+                icon: const Icon(Icons.history),
+                iconSize: 30,
+              ),
+              Expanded(
+                child: TextField(
+                    textAlign: TextAlign.right,
+                    controller: displayOperationController,
+                    decoration: displayStyle,
+                    readOnly: true,
+                    style: textStyleDisplayOperations),
+              )
+            ],
+          ),
           TextField(
               textAlign: TextAlign.right,
               controller: displayNumbersController,
@@ -284,10 +303,12 @@ class _CalculatorState extends State<Calculator> {
     if (deleteMode == DeleteMode.clearNumber) {
       displayNumbersController.text = "0";
       changeDeleteMode(DeleteMode.clearOperation);
+      numberIsNegative = false;
     } else {
       displayNumbersController.text = "0";
       displayOperationController.text = "";
       runningResult = 0;
+      numberIsNegative = false;
     }
   }
 
@@ -397,4 +418,6 @@ class _CalculatorState extends State<Calculator> {
     displayNumbersController.text = beautifyNumber(runningResult);
     numberIsNegative = false;
   }
+
+  moveToCalculationsHistory() {}
 }
