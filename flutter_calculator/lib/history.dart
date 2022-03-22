@@ -46,7 +46,11 @@ class _CalcsHistoryState extends State<CalcsHistory> {
                     // Show your info
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(history[index]),
+                      child: Text(
+                        history[index],
+                        style: const TextStyle(
+                            color: Colors.black, fontSize: 25.0),
+                      ),
                     );
                   },
                   itemCount: history.length,
