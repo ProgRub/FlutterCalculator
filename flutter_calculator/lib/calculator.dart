@@ -65,196 +65,191 @@ class _CalculatorState extends State<Calculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Calculator'),
-        ),
         body: Column(children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () => {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            CalcsHistory(calculationsHistory)),
-                  )
-                },
-                icon: const Icon(Icons.history),
-                iconSize: 30,
-              ),
-              Expanded(
-                child: TextField(
-                    textAlign: TextAlign.right,
-                    controller: displayOperationController,
-                    decoration: displayStyle,
-                    readOnly: true,
-                    style: textStyleDisplayOperations),
+      Row(
+        children: [
+          IconButton(
+            onPressed: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CalcsHistory(calculationsHistory)),
               )
-            ],
+            },
+            icon: const Icon(Icons.history),
+            iconSize: 30,
           ),
-          TextField(
-              textAlign: TextAlign.right,
-              controller: displayNumbersController,
-              decoration: displayStyle,
-              readOnly: true,
-              style: textStyleDisplayNumbers),
           Expanded(
-            child: SpannableGrid(
-              columns: 5,
-              rows: 4,
-              cells: [
-                SpannableGridCellData(
-                    id: 0,
-                    column: 1,
-                    row: 1,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(7)},
-                        child: const Text('7', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 1,
-                    column: 2,
-                    row: 1,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(8)},
-                        child: const Text('8', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 2,
-                    column: 3,
-                    row: 1,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(9)},
-                        child: const Text('9', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 3,
-                    column: 4,
-                    row: 1,
-                    child: TextButton(
-                        style: buttonOthersStyle,
-                        onPressed: () => {deleteDigit()},
-                        child: const Text("DEL", style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 4,
-                    column: 5,
-                    row: 1,
-                    child: TextButton(
-                        style: buttonOthersStyle,
-                        onPressed: () => {clearFunction()},
-                        child: Text(clearButtonText, style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 5,
-                    column: 1,
-                    row: 2,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(4)},
-                        child: const Text('4', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 6,
-                    column: 2,
-                    row: 2,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(5)},
-                        child: const Text('5', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 7,
-                    column: 3,
-                    row: 2,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(6)},
-                        child: const Text('6', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 8,
-                    column: 4,
-                    row: 2,
-                    child: TextButton(
-                        style: buttonOthersStyle,
-                        onPressed: () => {addOperator(Operations.addition)},
-                        child: const Text('+', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 9,
-                    column: 5,
-                    row: 2,
-                    child: TextButton(
-                        style: buttonOthersStyle,
-                        onPressed: () => {addOperator(Operations.subtraction)},
-                        child: const Text('-', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 10,
-                    column: 1,
-                    row: 3,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(1)},
-                        child: const Text('1', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 11,
-                    column: 2,
-                    row: 3,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(2)},
-                        child: const Text('2', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 12,
-                    column: 3,
-                    row: 3,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(3)},
-                        child: const Text('3', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 13,
-                    column: 4,
-                    row: 3,
-                    child: TextButton(
-                        style: buttonOthersStyle,
-                        onPressed: () =>
-                            {addOperator(Operations.multiplication)},
-                        child: const Text('x', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 14,
-                    column: 5,
-                    row: 3,
-                    child: TextButton(
-                        style: buttonOthersStyle,
-                        onPressed: () => {addOperator(Operations.division)},
-                        child: const Text('/', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 15,
-                    column: 1,
-                    row: 4,
-                    columnSpan: 2,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {registerNumber(0)},
-                        child: const Text('0', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 16,
-                    column: 3,
-                    row: 4,
-                    child: TextButton(
-                        style: buttonDigitsStyle,
-                        onPressed: () => {makeNumberNegative()},
-                        child: const Text('(-)', style: textStyleButtons))),
-                SpannableGridCellData(
-                    id: 17,
-                    column: 4,
-                    row: 4,
-                    columnSpan: 2,
-                    child: TextButton(
-                        style: buttonOthersStyle,
-                        onPressed: () => {showResult(true)},
-                        child: const Text('=', style: textStyleButtons)))
-              ],
-            ),
+            child: TextField(
+                textAlign: TextAlign.right,
+                controller: displayOperationController,
+                decoration: displayStyle,
+                readOnly: true,
+                style: textStyleDisplayOperations),
           )
-        ]));
+        ],
+      ),
+      TextField(
+          textAlign: TextAlign.right,
+          controller: displayNumbersController,
+          decoration: displayStyle,
+          readOnly: true,
+          style: textStyleDisplayNumbers),
+      Expanded(
+        child: SpannableGrid(
+          columns: 5,
+          rows: 4,
+          cells: [
+            SpannableGridCellData(
+                id: 0,
+                column: 1,
+                row: 1,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(7)},
+                    child: const Text('7', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 1,
+                column: 2,
+                row: 1,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(8)},
+                    child: const Text('8', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 2,
+                column: 3,
+                row: 1,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(9)},
+                    child: const Text('9', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 3,
+                column: 4,
+                row: 1,
+                child: TextButton(
+                    style: buttonOthersStyle,
+                    onPressed: () => {deleteDigit()},
+                    child: const Text("DEL", style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 4,
+                column: 5,
+                row: 1,
+                child: TextButton(
+                    style: buttonOthersStyle,
+                    onPressed: () => {clearFunction()},
+                    child: Text(clearButtonText, style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 5,
+                column: 1,
+                row: 2,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(4)},
+                    child: const Text('4', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 6,
+                column: 2,
+                row: 2,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(5)},
+                    child: const Text('5', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 7,
+                column: 3,
+                row: 2,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(6)},
+                    child: const Text('6', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 8,
+                column: 4,
+                row: 2,
+                child: TextButton(
+                    style: buttonOthersStyle,
+                    onPressed: () => {addOperator(Operations.addition)},
+                    child: const Text('+', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 9,
+                column: 5,
+                row: 2,
+                child: TextButton(
+                    style: buttonOthersStyle,
+                    onPressed: () => {addOperator(Operations.subtraction)},
+                    child: const Text('-', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 10,
+                column: 1,
+                row: 3,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(1)},
+                    child: const Text('1', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 11,
+                column: 2,
+                row: 3,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(2)},
+                    child: const Text('2', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 12,
+                column: 3,
+                row: 3,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(3)},
+                    child: const Text('3', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 13,
+                column: 4,
+                row: 3,
+                child: TextButton(
+                    style: buttonOthersStyle,
+                    onPressed: () => {addOperator(Operations.multiplication)},
+                    child: const Text('x', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 14,
+                column: 5,
+                row: 3,
+                child: TextButton(
+                    style: buttonOthersStyle,
+                    onPressed: () => {addOperator(Operations.division)},
+                    child: const Text('/', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 15,
+                column: 1,
+                row: 4,
+                columnSpan: 2,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {registerNumber(0)},
+                    child: const Text('0', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 16,
+                column: 3,
+                row: 4,
+                child: TextButton(
+                    style: buttonDigitsStyle,
+                    onPressed: () => {makeNumberNegative()},
+                    child: const Text('(-)', style: textStyleButtons))),
+            SpannableGridCellData(
+                id: 17,
+                column: 4,
+                row: 4,
+                columnSpan: 2,
+                child: TextButton(
+                    style: buttonOthersStyle,
+                    onPressed: () => {showResult(true)},
+                    child: const Text('=', style: textStyleButtons)))
+          ],
+        ),
+      )
+    ]));
   }
 
   void deleteDigit() {
