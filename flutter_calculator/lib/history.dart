@@ -30,7 +30,7 @@ class _CalcsHistoryState extends State<CalcsHistory> {
               Align(
                 alignment: Alignment.topLeft,
                 child: IconButton(
-                  onPressed: () => {Navigator.pop(context)},
+                  onPressed: () => {Navigator.pop(context, selectedAccent)},
                   icon: const Icon(Icons.arrow_back),
                   color: selectedAccent,
                 ),

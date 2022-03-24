@@ -27,9 +27,10 @@ class _CalculatorState extends State<Calculator> {
   static const Color blueAccent = Color.fromARGB(255, 0, 84, 174);
   static const Color greenAccent = Color.fromARGB(255, 12, 131, 2);
   static const Color redAccent = Color.fromARGB(255, 131, 2, 2);
+  Color selectedAccent = blueAccent;
   late bool numberIsNegative;
 
-  static const InputDecoration displayStyle = InputDecoration(
+  InputDecoration displayStyle = InputDecoration(
       border: InputBorder.none, filled: true, fillColor: blueAccent);
 
   @override
@@ -50,13 +51,13 @@ class _CalculatorState extends State<Calculator> {
           borderRadius: BorderRadius.zero,
         )),
         backgroundColor:
-            MaterialStateProperty.all(Color.fromARGB(255, 0, 0, 0)));
+            MaterialStateProperty.all(const Color.fromARGB(255, 0, 0, 0)));
     buttonOthersStyle = ButtonStyle(
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
         )),
-        backgroundColor: MaterialStateProperty.all(blueAccent));
+        backgroundColor: MaterialStateProperty.all(selectedAccent));
     textStyleButtons;
     darkModeOn = true;
     numberIsNegative = false;
@@ -69,13 +70,7 @@ class _CalculatorState extends State<Calculator> {
       Row(
         children: [
           IconButton(
-            onPressed: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CalcsHistory(calculationsHistory)),
-              )
-            },
+            onPressed: () => {goToHistory(context)},
             icon: const Icon(Icons.history),
             iconSize: 30,
           ),
@@ -414,5 +409,22 @@ class _CalculatorState extends State<Calculator> {
     numberIsNegative = false;
   }
 
-  moveToCalculationsHistory() {}
+  goToHistory(BuildContext context) async {
+    Color accent = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => CalcsHistory(calculationsHistory)),
+    ) as Color;
+    setState(() {
+      selectedAccent = accent;
+      displayStyle = InputDecoration(
+          border: InputBorder.none, filled: true, fillColor: selectedAccent);
+      buttonOthersStyle = ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          )),
+          backgroundColor: MaterialStateProperty.all(selectedAccent));
+    });
+  }
 }
