@@ -261,7 +261,8 @@ class _CalculatorState extends State<Calculator> {
       text = "0";
       showingResult = false;
     }
-    var displayNumber = int.parse(text) * 10 + number;
+    var displayNumber = int.parse(text) * 10;
+    displayNumber += displayNumber >= 0 ? number : number * -1;
     displayNumbersController.text = beautifyNumber(displayNumber);
     changeDeleteMode(DeleteMode.clearNumber);
   }
@@ -309,6 +310,9 @@ class _CalculatorState extends State<Calculator> {
     while (index > 0) {
       numberTextCharArray.insert(index, ' ');
       index -= 3;
+    }
+    if (number < 0) {
+      return "- " + numberTextCharArray.join("");
     }
     if (numberIsNegative && !numberTextCharArray.contains('-')) {
       numberTextCharArray.insert(0, '- ');
@@ -370,7 +374,6 @@ class _CalculatorState extends State<Calculator> {
     previousSelectedOperation = operation;
     clearFunction();
     showResult(false);
-    print(runningResult);
     numberIsNegative = false;
   }
 
@@ -379,7 +382,11 @@ class _CalculatorState extends State<Calculator> {
     if (fromEquals) {
       var numberText = displayNumbersController.text.split(" ").join("");
       var number = int.parse(numberText);
-      displayOperationController.text += beautifyNumber(number);
+      var numberToAdd = beautifyNumber(number);
+      if (number < 0) {
+        numberToAdd = "(" + numberToAdd + ")";
+      }
+      displayOperationController.text += numberToAdd;
       switch (previousSelectedOperation) {
         case Operations.addition:
           runningResult += number;
@@ -413,7 +420,8 @@ class _CalculatorState extends State<Calculator> {
     Color accent = await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CalcsHistory(calculationsHistory)),
+          builder: (context) =>
+              CalcsHistory(calculationsHistory, selectedAccent)),
     ) as Color;
     setState(() {
       selectedAccent = accent;

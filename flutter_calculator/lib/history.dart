@@ -3,11 +3,14 @@ import 'package:flutter_calculator/calculator.dart';
 
 class CalcsHistory extends StatefulWidget {
   late List<String> history;
-  CalcsHistory(List<String> history) {
+  late Color selectedAccent;
+  CalcsHistory(List<String> history, Color selectedAccent) {
     this.history = history;
+    this.selectedAccent = selectedAccent;
   }
   @override
-  State<StatefulWidget> createState() => _CalcsHistoryState(history);
+  State<StatefulWidget> createState() =>
+      _CalcsHistoryState(history, selectedAccent);
 }
 
 class _CalcsHistoryState extends State<CalcsHistory> {
@@ -16,9 +19,9 @@ class _CalcsHistoryState extends State<CalcsHistory> {
   static const Color blueAccent = Color.fromARGB(255, 0, 84, 174);
   static const Color greenAccent = Color.fromARGB(255, 12, 131, 2);
   static const Color redAccent = Color.fromARGB(255, 131, 2, 2);
-  late Color selectedAccent = blueAccent;
+  late Color selectedAccent;
 
-  _CalcsHistoryState(this.history);
+  _CalcsHistoryState(this.history, this.selectedAccent);
 
   @override
   Widget build(BuildContext context) {
@@ -88,31 +91,27 @@ class _CalcsHistoryState extends State<CalcsHistory> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Column(
-                children: [
-                  Scrollbar(
-                      isAlwaysShown: true,
-                      controller: _controller,
-                      child: ListView.separated(
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const Divider(),
-                        controller: _controller,
-                        shrinkWrap: true,
-                        itemBuilder: (BuildContext, index) {
-                          // Show your info
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              history[index],
-                              style: TextStyle(
-                                  color: selectedAccent, fontSize: 20.0),
-                            ),
-                          );
-                        },
-                        itemCount: history.length,
-                        scrollDirection: Axis.vertical,
-                      )),
-                ],
+              child: Scrollbar(
+                isAlwaysShown: true,
+                controller: _controller,
+                child: ListView.separated(
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
+                  controller: _controller,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext, index) {
+                    // Show your info
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        history[index],
+                        style: TextStyle(color: selectedAccent, fontSize: 20.0),
+                      ),
+                    );
+                  },
+                  itemCount: history.length,
+                  scrollDirection: Axis.vertical,
+                ),
               ),
             ),
           )
