@@ -334,9 +334,6 @@ class _CalculatorState extends State<Calculator> {
     }
     var operationClear = displayOperationController.text.isEmpty;
     displayOperationController.text += numberToAdd;
-    if (operationClear) {
-      runningResult = number;
-    }
     switch (operation) {
       case Operations.addition:
         displayOperationController.text += " + ";
@@ -354,22 +351,26 @@ class _CalculatorState extends State<Calculator> {
         // TODO: Handle this case.
         break;
     }
-    switch (previousSelectedOperation) {
-      case Operations.addition:
-        runningResult += number;
-        break;
-      case Operations.subtraction:
-        runningResult -= number;
-        break;
-      case Operations.multiplication:
-        runningResult *= number;
-        break;
-      case Operations.division:
-        runningResult ~/= number;
-        break;
-      case Operations.equals:
-        changeDeleteMode(DeleteMode.clearNumber);
-        break;
+    if (operationClear) {
+      runningResult = number;
+    } else {
+      switch (previousSelectedOperation) {
+        case Operations.addition:
+          runningResult += number;
+          break;
+        case Operations.subtraction:
+          runningResult -= number;
+          break;
+        case Operations.multiplication:
+          runningResult *= number;
+          break;
+        case Operations.division:
+          runningResult ~/= number;
+          break;
+        case Operations.equals:
+          changeDeleteMode(DeleteMode.clearNumber);
+          break;
+      }
     }
     previousSelectedOperation = operation;
     clearFunction();
