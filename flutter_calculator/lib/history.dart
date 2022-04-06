@@ -3,10 +3,10 @@ import 'package:flutter_calculator/calculator.dart';
 
 class CalcsHistory extends StatefulWidget {
   late List<String> history;
-  late Color selectedAccent;
+  static late Color selectedAccent;
   CalcsHistory(List<String> history, Color selectedAccent) {
     this.history = history;
-    this.selectedAccent = selectedAccent;
+    CalcsHistory.selectedAccent = selectedAccent;
   }
   @override
   State<StatefulWidget> createState() =>
@@ -44,6 +44,7 @@ class _CalcsHistoryState extends State<CalcsHistory> {
                   onPressed: () {
                     setState(() {
                       selectedAccent = blueAccent;
+                      CalcsHistory.selectedAccent = selectedAccent;
                     });
                   },
                   child: const Text(""),
@@ -60,6 +61,7 @@ class _CalcsHistoryState extends State<CalcsHistory> {
                   onPressed: () {
                     setState(() {
                       selectedAccent = greenAccent;
+                      CalcsHistory.selectedAccent = selectedAccent;
                     });
                   },
                   child: const Text(""),
@@ -76,6 +78,7 @@ class _CalcsHistoryState extends State<CalcsHistory> {
                   onPressed: () {
                     setState(() {
                       selectedAccent = redAccent;
+                      CalcsHistory.selectedAccent = selectedAccent;
                     });
                   },
                   child: const Text(""),

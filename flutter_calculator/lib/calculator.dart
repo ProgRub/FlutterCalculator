@@ -35,6 +35,7 @@ class _CalculatorState extends State<Calculator> {
 
   @override
   void initState() {
+    super.initState();
     displayNumbersController = TextEditingController();
     displayNumbersController.text = "0";
     displayOperationController = TextEditingController();
@@ -248,7 +249,7 @@ class _CalculatorState extends State<Calculator> {
   }
 
   void deleteDigit() {
-    if (previousSelectedOperation == Operations.equals) return;
+    if (displayNumbersController.text == "ERROR") return;
     var text = displayNumbersController.text.split(" ").join("");
     var displayNumber = int.parse(text) ~/ 10;
     displayNumbersController.text = beautifyNumber(displayNumber);
@@ -257,6 +258,9 @@ class _CalculatorState extends State<Calculator> {
 
   void registerNumber(int number) {
     var text = displayNumbersController.text.split(" ").join("");
+    if (text == "ERROR") {
+      text = "0";
+    }
     if (showingResult) {
       text = "0";
       showingResult = false;
@@ -323,6 +327,7 @@ class _CalculatorState extends State<Calculator> {
   }
 
   void addOperator(Operations operation) {
+    if (displayNumbersController.text == "ERROR") return;
     var numberText = displayNumbersController.text.split(" ").join("");
     var number = int.parse(numberText);
     var numberToAdd = beautifyNumber(number);
@@ -351,34 +356,44 @@ class _CalculatorState extends State<Calculator> {
         // TODO: Handle this case.
         break;
     }
-    if (operationClear) {
-      runningResult = number;
-    } else {
-      switch (previousSelectedOperation) {
-        case Operations.addition:
-          runningResult += number;
-          break;
-        case Operations.subtraction:
-          runningResult -= number;
-          break;
-        case Operations.multiplication:
-          runningResult *= number;
-          break;
-        case Operations.division:
-          runningResult ~/= number;
-          break;
-        case Operations.equals:
-          changeDeleteMode(DeleteMode.clearNumber);
-          break;
+    try {
+      if (operationClear) {
+        runningResult = number;
+      } else {
+        switch (previousSelectedOperation) {
+          case Operations.addition:
+            runningResult += number;
+            break;
+          case Operations.subtraction:
+            runningResult -= number;
+            break;
+          case Operations.multiplication:
+            runningResult *= number;
+            break;
+          case Operations.division:
+            runningResult ~/= number;
+            break;
+          case Operations.equals:
+            changeDeleteMode(DeleteMode.clearNumber);
+            break;
+        }
       }
+      previousSelectedOperation = operation;
+      changeDeleteMode(DeleteMode.clearNumber);
+      clearFunction();
+      changeDeleteMode(DeleteMode.clearOperation);
+      showResult(false);
+    } catch (IntegerDivisionByZero) {
+      runningResult = 0;
+      displayNumbersController.text = "ERROR";
+      displayOperationController.text = "";
+      changeDeleteMode(DeleteMode.clearOperation);
     }
-    previousSelectedOperation = operation;
-    clearFunction();
-    showResult(false);
     numberIsNegative = false;
   }
 
   void showResult(bool fromEquals) {
+    if (displayNumbersController.text == "ERROR") return;
     showingResult = true;
     if (fromEquals) {
       var numberText = displayNumbersController.text.split(" ").join("");
@@ -388,44 +403,53 @@ class _CalculatorState extends State<Calculator> {
         numberToAdd = "(" + numberToAdd + ")";
       }
       displayOperationController.text += numberToAdd;
-      switch (previousSelectedOperation) {
-        case Operations.addition:
-          runningResult += number;
-          break;
-        case Operations.subtraction:
-          runningResult -= number;
-          break;
-        case Operations.multiplication:
-          runningResult *= number;
-          break;
-        case Operations.division:
-          runningResult ~/= number;
-          break;
-        case Operations.equals:
-          // TODO: Handle this case.
-          break;
+      try {
+        switch (previousSelectedOperation) {
+          case Operations.addition:
+            runningResult += number;
+            break;
+          case Operations.subtraction:
+            runningResult -= number;
+            break;
+          case Operations.multiplication:
+            runningResult *= number;
+            break;
+          case Operations.division:
+            runningResult ~/= number;
+            break;
+          case Operations.equals:
+            displayOperationController.text = beautifyNumber(number);
+            runningResult = number;
+            break;
+        }
+        numberIsNegative = runningResult < 0;
+        previousSelectedOperation = Operations.equals;
+        changeDeleteMode(DeleteMode.clearOperation);
+        calculationsHistory.add(displayOperationController.text +
+            " = " +
+            beautifyNumber(runningResult));
+      } catch (IntegerDivisionByZero) {
+        runningResult = 0;
+        displayNumbersController.text = "ERROR";
+        displayOperationController.text = "";
+        changeDeleteMode(DeleteMode.clearOperation);
+        numberIsNegative = false;
+        return;
       }
-      numberIsNegative = runningResult < 0;
-      previousSelectedOperation = Operations.equals;
-      changeDeleteMode(DeleteMode.clearOperation);
-      calculationsHistory.add(displayOperationController.text +
-          " = " +
-          beautifyNumber(runningResult));
-      print(calculationsHistory);
     }
     displayNumbersController.text = beautifyNumber(runningResult);
     numberIsNegative = false;
   }
 
   goToHistory(BuildContext context) async {
-    Color accent = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) =>
               CalcsHistory(calculationsHistory, selectedAccent)),
-    ) as Color;
+    ); //Color accent =  as Color;
     setState(() {
-      selectedAccent = accent;
+      selectedAccent = CalcsHistory.selectedAccent;
       displayStyle = InputDecoration(
           border: InputBorder.none, filled: true, fillColor: selectedAccent);
       buttonOthersStyle = ButtonStyle(
