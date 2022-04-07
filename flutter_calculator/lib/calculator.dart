@@ -429,6 +429,7 @@ class _CalculatorState extends State<Calculator> {
             " = " +
             beautifyNumber(runningResult));
       } catch (IntegerDivisionByZero) {
+        previousSelectedOperation = Operations.equals;
         runningResult = 0;
         displayNumbersController.text = "ERROR";
         displayOperationController.text = "";
